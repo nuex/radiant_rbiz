@@ -40,12 +40,17 @@ module CartTags
     tag.expand unless tag.locals.cart.shipping_error?
   end
 
+  desc 'Expand if the shipping is taxed'
+  tag 'cart:if_tax_shipping' do |tag|
+    tag.expand unless tag.locals.cart.taxable?
+  end
+
   desc 'Show the error message from the cart'
   tag 'cart:error_message' do |tag|
     tag.locals.cart.error_message
   end
 
-  ['comments', 'id', 'status_message'].each do |tn|
+  ['comments', 'id', 'status_message', 'tax_rate'].each do |tn|
     desc "Show the #{tn} from the cart"
     tag "cart:#{tn}" do |tag|
       tag.locals.cart.send(tn)
@@ -84,22 +89,6 @@ module CartTags
     or (CartConfig.get(:coupons, :allow_only_one) and !@cart.coupons.empty?)
       tag.expand
     end
-  end
-
-  desc 'expand if shipping is taxable'
-  tag 'cart:if_tax_shipping' do |tag|
-    tag.expand if tag.locals.cart.taxable?
-  end
-
-  desc 'show the tax rate'
-  tag 'cart:tax_rate' do |tag|
-    tag.locals.cart.tax_rate
-  end
-
-
-  desc 'show the tax rate'
-  tag 'cart:tax_rate' do |tag|
-    tag.locals.cart.tax_rate
   end
 
 end
