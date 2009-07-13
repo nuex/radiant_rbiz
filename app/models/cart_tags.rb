@@ -40,12 +40,17 @@ module CartTags
     tag.expand unless tag.locals.cart.shipping_error?
   end
 
+  desc 'Expand if the shipping is taxed'
+  tag 'cart:if_tax_shipping' do |tag|
+    tag.expand unless CartConfig.get(:omit_shipping_from_tax, :payment)
+  end
+
   desc 'Show the error message from the cart'
   tag 'cart:error_message' do |tag|
     tag.locals.cart.error_message
   end
 
-  ['comments', 'id', 'status_message'].each do |tn|
+  ['comments', 'id', 'status_message', 'tax_rate'].each do |tn|
     desc "Show the #{tn} from the cart"
     tag "cart:#{tn}" do |tag|
       tag.locals.cart.send(tn)
