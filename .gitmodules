@@ -1,6 +1,6 @@
 [submodule "vendor/plugins/rbiz"]
 	path = vendor/plugins/rbiz
-	url = git://github.com/rubidine/rbiz.git
+	url = ssh://code.promptsite.net/var/git/rbiz.git
 [submodule "vendor/plugins/acts_as_list"]
 	path = vendor/plugins/acts_as_list
 	url = git://github.com/rails/acts_as_list.git
