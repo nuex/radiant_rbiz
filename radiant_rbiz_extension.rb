@@ -19,7 +19,7 @@ class RadiantRbizExtension < Radiant::Extension
   version "1.0"
   description "Radiant integration for RBiz"
   url "http://github.com/rubidine/rbiz"
-  
+
   def activate
 
     # Add links to header on every page
@@ -30,8 +30,8 @@ class RadiantRbizExtension < Radiant::Extension
 
     # Protect from forgery and Radiant's use of ActiveRecordStore don't mix
     # maybe this has changed by 0.6.7 ?
-#    CustomerController.send :skip_before_filter, :verify_authenticity_token
-#    CartController.send :skip_before_filter, :verify_authenticity_token
+    CustomerController.send :skip_before_filter, :verify_authenticity_token
+    CartController.send :skip_before_filter, :verify_authenticity_token
 
     # Cart and customer don't need a radiant login
     CartController.send :no_login_required
@@ -69,7 +69,7 @@ class RadiantRbizExtension < Radiant::Extension
       CartController.send :before_filter, &default_title_and_breadcrumbs
       CustomerController.send :before_filter, &default_title_and_breadcrumbs
     end
-    
+
     [
       Office::CartConfigsController,
       Office::CartsController,
@@ -92,13 +92,13 @@ class RadiantRbizExtension < Radiant::Extension
       # remove standalone-style access-control to office
       controller.send :skip_before_filter, :office_login_requirement
     end
-    
+
   end
-  
+
   def deactivate
     admin.tabs.remove "Cart Office"
     OfficeViewExtender.unregister '/common/header', :partial => 'office/radiant_nav'
     OfficeViewExtender.unregister '/common/header', :partial => 'office/radiant_js'
   end
-  
+
 end
