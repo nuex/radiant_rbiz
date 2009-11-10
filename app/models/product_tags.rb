@@ -1,13 +1,15 @@
-module ProductTags 
+module ProductTags
   include Radiant::Taggable
   include RadiantWillPaginate
+
+  class TagError < StandardError; end
 
   # Start with the product
   desc %{
     This tag allows you to access a product's information.  It is a container
     for other tags like name, slug, image, etc.  Find the product by
     id or slug.
-    
+
     <pre><code><r:product id="1"><r:name/></r:product></code></pre>
     <pre><code><r:product slug="my_product"><r:name/></r:product></code></pre>
   }
@@ -23,7 +25,7 @@ module ProductTags
   # itterate over all products
   desc %{
     Cycles through each product.
-    
+
     *Usage:*
     <pre><code><r:product:each [offset="number"] [limit="number"] [by="attribute"] [order="asc|desc"]>
      ...
@@ -44,7 +46,7 @@ module ProductTags
       else
         opts[:order] = "id"
       end
-      
+
       if tag.attr['order']
         opts[:order] += " #{tag.attr['order']}"
       end
@@ -76,7 +78,7 @@ module ProductTags
         # the paginate call will be outside of this tag
         tag.globals.products = products
       else
-        products = Product.available.find(:all, opts)  
+        products = Product.available.find(:all, opts)
       end
     end
 
@@ -146,6 +148,17 @@ module ProductTags
     end
   end
 
+  desc %{
+    Expand inner tags if the current product belongs to a given tag. Requires the "name" attribute.
+
+    *Usage:*
+    <pre><code><r:product:if_tag name="MyTag">...</r:product:if_tag></code></pre>
+  }
+  tag "product:if_tag" do |tag|
+    raise TagError, "if_tag: `name' attribute required" unless tag.attr['name']
+    tag.expand if tag.locals.product.tags.find_by_name(tag.attr['name'])
+  end
+
   [
     'id',
     'name',
@@ -173,7 +186,7 @@ module ProductTags
 
   # product inventory
   desc %{
-    This tag allows you to access a product's available inventory. 
+    This tag allows you to access a product's available inventory.
     Will return:
      * 'Available' if marked as always available
      * '(number) Available' if quantity is specified
@@ -189,7 +202,7 @@ module ProductTags
       "#{p.quantity} Available"
     end
   end
-  
+
   # product dimensions
   desc %{
     This tag allows you to access a product's dimensions (X" x Y" x Z")
@@ -198,7 +211,7 @@ module ProductTags
     p = tag.locals.product
     "#{p.width}\" x #{p.height}\" x #{p.depth}\""
   end
-  
+
   # add to cart url
   desc %{
     Return the url for adding this to cart
